@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import databutton as db
 import pickle
 import pdfplumber
-
+import re
 
 from PyPDF2 import PdfReader
 
@@ -20,13 +20,12 @@ import openai
 import io
 
 
-
 # Sidebar contents
 with st.sidebar:
     st.title("🤗💬Pdf Chat bot💬🤗")
     st.write("Enter the OPENAI key, this will not be saved")
     api = st.sidebar.text_input("API_Key", type="password")
-    #os.environ["OPENAI_API_KEY"] = api
+    # os.environ["OPENAI_API_KEY"] = api
     openai.api_key = api
     # st.write(api)
     st.markdown(
@@ -42,11 +41,11 @@ with st.sidebar:
     st.write("Made by Abdul Samad, https://github.com/abdulsamadkhan/YourPdfChatBot")
 
 
-#load_dotenv()
+# load_dotenv()
 
 
 def main():
-    st.header("Chat with PDF 💬")
+    st.header(" 👻 Chat with PDF  👻")
     # checks if the API Key is Entered
     if api:
         # upload a PDF file
@@ -70,13 +69,15 @@ def main():
             store_name = store_name.replace(
                 " ", ""
             )  # Replace space and "#" characters with underscores or remove them
+            store_name = re.sub(r"\W+", "_", store_name)
 
             # st.write(f"{store_name}")
             # st.write(chunks)
 
             try:
-                if db.storage.binary.get(f"{store_name}.pkl"):
-                    # raise FileNotFoundError(f"{store_name}.pkl not found")
+                #    if db.storage.binary.get(f"{store_name}.pkl", default=lambda: None):
+
+                if db.storage.binary.get(f"{store_name}.pkl", default=lambda: None):
                     findex = db.storage.binary.get(f"{store_name}.index")
                     st.write("Your Vector database for this file already exists !!")
                     with open("docs.index", "wb") as file:
@@ -88,16 +89,16 @@ def main():
                     VectorStore.index = index
 
                 else:
-                    pass
+                    raise FileNotFoundError(f"{store_name}.pkl not found")
 
             except FileNotFoundError as e:
                 # Custom exception handling
-                st.write(f"This pdf embedding does not exist in the database: {str(e)}")
+                # st.write(f"This pdf embedding does not exist in the database: {str(e)}")
                 # Additional actions if needed
-                embeddings = OpenAIEmbeddings()
+                embeddings = OpenAIEmbeddings(openai_api_key=api)
                 VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
 
-                #st.write("Vector Store create")
+                # st.write("Vector Store create")
 
                 # Write index to file (no method to generate stream object instead)
                 faiss.write_index(VectorStore.index, "docs.index")
@@ -116,7 +117,7 @@ def main():
 
             if query:
                 docs = VectorStore.similarity_search(query=query, k=3)
-                llm = OpenAI()
+                llm = OpenAI(openai_api_key=api)
                 chain = load_qa_chain(llm=llm, chain_type="stuff")
                 with get_openai_callback() as cb:
                     response = chain.run(input_documents=docs, question=query)
