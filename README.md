@@ -5,5 +5,5 @@ https://databutton.com/v/aqmnwlmr
 
 # Use Case  
 I apploaded the Liberal Arts Model.pdf for demonstration and asked two questions. The below image snippets shows the chatbot screen
-![screen1](Chatbot demo 1.png)
-![screen2](Chatbot demo 2.png)
+![screen1](Chatbot1.png)
+![screen2](Chatbot2.png)
