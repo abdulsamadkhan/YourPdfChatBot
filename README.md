@@ -4,6 +4,6 @@ This repository provides the necessary code to create your own PDF chatbot using
 https://databutton.com/v/aqmnwlmr
 
 # Use Case  
-I apploaded the Liberal Arts Model.pdf for demonstration and asked two questions. The below image snippets shows the chatbot screen
+I apploaded the  [embed]Liberal Arts Model.pdf[/embed] for demonstration and asked two questions. The below image snippets shows the chatbot screen
 ![screen1](Chatbot1.png)
 ![screen2](Chatbot2.png)
